@@ -1,5 +1,6 @@
 import cors from '@fastify/cors'
 import Fastify from 'fastify'
+import { memoriesRoutes } from './routes/memories'
 
 const port = (process.env.PORT as unknown as number) || 3333
 
@@ -12,9 +13,7 @@ async function bootstrap() {
     origin: true,
   })
 
-  server.get('/test', () => {
-    return 'This is a test'
-  })
+  await server.register(memoriesRoutes, { prefix: '/api/memories' })
 
   await server
     .listen({
