@@ -1,6 +1,5 @@
 import axios from "axios";
 import { FastifyInstance } from "fastify";
-import process from "process";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 
@@ -18,7 +17,7 @@ const userSchema = z.object({
 type userInfoProps = z.infer<typeof userSchema>;
 
 const checkIfUserExists = async (githubId: number) => {
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       githubId,
     },
@@ -71,14 +70,14 @@ export async function authRoutes(server: FastifyInstance) {
     if (!user) {
       await handleCreateUser(userInfo);
     }
-
+    const { avatarUrl, name, id } = user || {};
     const spacetimeToken = server.jwt.sign(
       {
-        avatarUrl: user.avatarUrl,
-        name: user.name,
+        avatarUrl,
+        name,
       },
       {
-        sub: user.id,
+        sub: id,
         expiresIn: "7 days",
       }
     );
