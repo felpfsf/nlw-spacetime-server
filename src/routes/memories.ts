@@ -11,8 +11,8 @@ export async function memoriesRoutes(server: FastifyInstance) {
   server.get("/", async (request) => {
     const memories = await prisma.memory.findMany({
       where: {
-        // Lista apenas as memórias do usuário logado
-        id: request.user.sub,
+        //   // Lista apenas as memórias do usuário logado
+        userId: request.user.sub,
       },
       orderBy: {
         createdAt: "asc",
@@ -23,6 +23,7 @@ export async function memoriesRoutes(server: FastifyInstance) {
         id: memory.id,
         coverUrl: memory.coverUrl,
         excerpt: memory.content.substring(0, 115).concat("..."),
+        createdAt: memory.createdAt
       };
     });
   });
